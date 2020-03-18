@@ -1,7 +1,28 @@
-/* body {
-    background-color: salmon;
-} */
+body {
+    text-align: center;
+    width: 60%;
+    margin: 0 auto;
+}
+
+#timer {
+    font-size: 20px;
+}
 
 #result {
-    border-top: 1px blue;
+    color: blue;
+    font-size: 20px;
+}
+
+#questions {
+    width: 80%;
+    margin: 0 auto;
+}
+
+.question {
+    margin-bottom: 50px;
+    font-size: 24px;
+}
+
+.answer {
+    font-size: 18px;
 }
