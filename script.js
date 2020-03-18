@@ -145,8 +145,10 @@ function ticker() {
 
 // This function rewrites content on page using questions stored in questionsArr
 function displayQuestion(){
-    // Clears div of any text content
-    questionsEl.removeChild(questionsEl.lastChild)
+    // Clears div of any text content unless empty
+    if (questionsEl.children.length) {
+        questionsEl.removeChild(questionsEl.lastChild)
+    }
     // Assigns variable to questions array based on question progress
     var currentQuestion = questionsArr[questionTrack];
     // Creates a div for the question and its answer choices
@@ -216,7 +218,7 @@ function highScores(){
     // Clears divs of any text content
     questionsEl.removeChild(questionsEl.lastChild)
     headerEl.removeChild(headerEl.lastChild)
-    descriptionEl.removeChild(descriptionEl.lastChild)
+    descriptionEl.textContent = "";
     timerEl.removeChild(timerEl.lastChild)
     timerEl.removeChild(timerEl.lastChild)
     
@@ -256,7 +258,10 @@ function highScores(){
 }
 
 function restart(){
-    headerEl
+    // console.log("restart button clicked")
+    questionTrack = 0;
+    timeRemaining = 1000;
+    ticker()
 }
 
 // This function writes the form to submit user score and initials to local storage
@@ -307,7 +312,12 @@ function submission(event){
     var finalScore = parseInt(finalScoreEl.textContent)
     storedScores.push(finalScore);
 
-    saveScores();
+    var scoreEntry = {
+        name: initialsText,
+        score: finalScore
+    }
+
+    saveScores(scoreEntry);
     inLS();
     renderScores();
 
@@ -341,11 +351,15 @@ function renderScores() {
 }
 
 
-function saveScores(){
-    // Stringify and set the name in local storage
-    localStorage.setItem("Name", JSON.stringify(storedNames))
-    // Stringify and set the score in local storage
-    localStorage.setItem("Score", JSON.stringify(storedScores))
+function saveScores(scoreObject){
+    var pullScores = JSON.parse(localStorage.getItem("highScores"))
+    if (pullScores && pullScores.length) {
+        pullScores.push(scoreObject)
+        localStorage.setItem("highScores", JSON.stringify(pullScores))
+    } else {
+        var firstScore = [scoreObject];
+        localStorage.setItem("highScores", JSON.stringify(firstScore))
+    }
 }
 
 
@@ -353,6 +367,8 @@ function saveScores(){
 
 // Starts timer for quiz
 function quizTimer() {
+    // reset all variables to default
+    // move the statement removing text from #description here
     startBtnEl.setAttribute("display", "none")
     var y = setInterval (function() {
         if (timeRemaining >= 0) {
