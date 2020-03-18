@@ -1,3 +1,7 @@
+var rightAnswers = 0;
+var wrongAnswers = 0;
+
+
 // Grab start button
 var startBtnEl = document.getElementById("startQuiz");
 
@@ -12,17 +16,16 @@ startBtnEl.addEventListener("click",ticker);
     var countdown = document.querySelector("#countdown");
 
     // Countdown ticker
-    i = 2;
+    i = 1;
     function ticker() {
         var x = setInterval(function() { 
             if (i >= 1) {
                 countdown.textContent = i;
-                // console.log(i);
                 i--;
             } else {
-                // console.log("pass");
                 clearInterval(x);
-                quizFunction();
+                quizTimer();
+                displayQuestion();
             }
         }, 1000)
     }
@@ -30,18 +33,18 @@ startBtnEl.addEventListener("click",ticker);
 // Contains all the questions, answers, and their results
 var questionsArr = [
     {
-        question: `For a given fighting type pokemon that endures a move with 1HP remaining, then uses a salac berry, what is the most likely move to be used in the next turn?`, 
+        question: `q1`/*`For a given fighting type pokemon that endures a move with 1HP remaining, then uses a salac berry, what is the most likely move to be used in the next turn?`*/, 
         answers: [
             {
-                option: `Submission`,
+                option: /* `Submission`*/`a1`,
                 result: false
             },
             {
-                option: `Cross Chop`,
+                option: /*`Cross Chop`*/`a2`,
                 result: false
             },
             {
-                option: `Reversal`,
+                option: /*`Reversal`*/`a3`,
                 result: true
             }
         ]
@@ -116,7 +119,7 @@ var questionsArr = [
     }
 ]
 
-// Tracks the index in questions array
+// Provides and tracks the index in questions array
 var questionTrack = 0;
 
 // Rewrites content on page using questions stored in array
@@ -149,6 +152,8 @@ function displayQuestion(){
         answerEl.setAttribute("class","answer")
         // Assigns a result attribute of boolean data type to indicate right/wrong
         answerEl.setAttribute("result",currentAnswer.result)
+        // Adds an event listener for clicks on the answers, fires answer checker function
+        answerEl.addEventListener("click",answerChecker)
         // Fills in the answer h5 with the stored text
         answerEl.textContent = currentAnswer.option
         // Appends the answer to the question div
@@ -156,30 +161,30 @@ function displayQuestion(){
     }
     // Appends the question and answer choices to the question div
     questionsEl.appendChild(questionDiv)
-
-    var answerChoiceEl = document.querySelectorAll(".answer");
-    answerChoiceEl.forEach(function(){
-        addEventListener("click",function(event){
-            questionTrack++;
-            displayQuestion();
-            // console.log(event.target);
-        })
-    })
-    
-    // answerChoiceEl.forEach(function(){
-    //     console.log("clicked")
-    // })
-
-    // answerChoiceEl.forEach(console.log)
-    // console.log(answerChoiceEl)
-
-
-    // choices()
 }
+
+// This function checks whether the user got the question correct or not
+function answerChecker(event){
+    var check = event.target.getAttribute("result");
+    var resultEl = document.querySelector("#result")
+    if (check==="true") {
+        rightAnswers++;
+        resultEl.textContent = "Correct!"
+    } else {
+        wrongAnswers++;
+        resultEl.textContent = "Sorry, that was incorrect."
+    }
+    // After clicking, increment questionTrack
+    questionTrack++;
+    // Call displayQuestion to populate the next question
+    displayQuestion();
+}
+
+
 
 // Starts timer for quiz
 j = 1000;
-function quizFunction() {
+function quizTimer() {
     var y = setInterval (function() {
         if (j >= 0) {
             countdown.textContent = j;
@@ -190,7 +195,6 @@ function quizFunction() {
         }
         }, 1000
     )
-    displayQuestion()   
 }
 
 // function choices(){
