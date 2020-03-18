@@ -1,34 +1,7 @@
 var rightAnswers = 0;
 var wrongAnswers = 0;
-
-// Grab start button
-var startBtnEl = document.getElementById("startQuiz");
-
-// Add click listener to start button to start ticker function
-startBtnEl.addEventListener("click",ticker);
-
-// Start a timer and countdown for quiz preparedness
-    // Grab the timer element
-    var timer = document.querySelector("#timer");
-
-    // Grab countdown element
-    var countdown = document.querySelector("#countdown");
-
-    // Countdown ticker
-    i = 1;
-    function ticker() {
-        var x = setInterval(function() { 
-            if (i >= 1) {
-                countdown.textContent = i;
-                i--;
-            } else {
-                // gameOver();
-                clearInterval(x);
-                quizTimer();
-                displayQuestion();
-            }
-        }, 1000)
-    }
+var storedScores = [];
+var storedNames = [];
 
 // Contains all the questions, answers, and their results
 var questionsArr = [
@@ -119,12 +92,58 @@ var questionsArr = [
     // }
 ]
 
+// Grab start button
+var startBtnEl = document.getElementById("startQuiz");
+
+// Grab the timer element
+var timer = document.querySelector("#timer");
+
+// Grab countdown element
+var countdown = document.querySelector("#countdown");
+
+// Grab a reference to heading h1
+var headerEl = document.querySelector("#heading")
+
+// Grab a reference to description h3
+var descriptionEl = document.querySelector("#description")
+
+// Grab a reference to timekeeping h1
+var timerEl = document.querySelector("#timer")
+
+// Grab a reference to scoring div
+var scoringEl = document.querySelector("#scoring")
+
 // Provides and tracks the index in questions array
 var questionTrack = 0;
+
 // Grab reference to questions div element
 var questionsEl = document.getElementById("questions")
 
-// Rewrites content on page using questions stored in array
+// Create time remaining variable
+var timeRemaining = 1000;
+
+// Add click listener to start button to start ticker function
+startBtnEl.addEventListener("click",ticker);
+
+
+// This function is a countdown ticker to countdown prior to quiz
+function ticker() {
+    console.log("clicked ticker")
+    var i = 1;
+    var x = setInterval(function() { 
+        if (i >= 1) {
+            countdown.textContent = i;
+            i--;
+        } else {
+            // gameOver();
+            clearInterval(x);
+            quizTimer();
+            displayQuestion();
+        }
+    }, 1000)
+}
+
+// This function rewrites content on page using questions stored in questionsArr
 function displayQuestion(){
     // Clears div of any text content
     questionsEl.removeChild(questionsEl.lastChild)
@@ -183,23 +202,14 @@ function answerChecker(event){
 }
 
 // This function will check for end game conditions
-// (timer j = 0 and if there are no more questions)
+// (timer timeRemaining = 0 and if there are no more questions)
 // Also brings up score element
 function gameOver(){
-    if (j==0 || questionTrack==(questionsArr.length-1)) {
+    if (timeRemaining==0 || questionTrack==(questionsArr.length-1)) {
         highScores();
     }
-
 }
 
-// Grab a reference to heading h1
-var headerEl = document.querySelector("#heading")
-// Grab a reference to description h3
-var descriptionEl = document.querySelector("#description")
-// Grab a reference to timekeeping h1
-var timerEl = document.querySelector("#timer")
-// Grab a reference to scoring div
-var scoringEl = document.querySelector("#scoring")
 
 // This function runs at the end of the game and computes score
 function highScores(){
@@ -209,14 +219,16 @@ function highScores(){
     descriptionEl.removeChild(descriptionEl.lastChild)
     timerEl.removeChild(timerEl.lastChild)
     timerEl.removeChild(timerEl.lastChild)
+    
     // timerEl.removeChild(timerEl.children)
 
     // Create high scores form
         // Create new heading 
         headerEl.textContent = "Your Score"
         
-        // Create score field and calculatoin
+        // Create score field and calculation
         var userScore = document.createElement("h5");
+        userScore.setAttribute("id", "finalScore")
         var scoreMultiplier = 1;
         if (rightAnswers === questionsArr.length) {
             scoreMultiplier = 15;
@@ -226,13 +238,30 @@ function highScores(){
             scoreMultiplier = rightAnswers/wrongAnswers
         }
         // Store final score in a variable
-        var finalScore = Math.floor(scoreMultiplier*j)
+        var finalScore = Math.floor(scoreMultiplier*timeRemaining)
         // Push final score into user score
         userScore.textContent = finalScore
         // Append user score into header as an h5
         headerEl.appendChild(userScore)
-    
-    // Create a form for submitting high score
+
+        // Call scoreForm function to write score and initials to Local Storage
+        scoreForm()
+
+    // Create button to play again
+    var replayBtn = document.createElement("button")
+    replayBtn.setAttribute("id", "replay")
+    replayBtn.textContent = "Play again?"
+    replayBtn.addEventListener("click", restart)
+    scoringEl.appendChild(replayBtn)
+}
+
+function restart(){
+    headerEl
+}
+
+// This function writes the form to submit user score and initials to local storage
+function scoreForm() {
+    // Create a form for submitting score
         // Create form
         var scores = document.createElement("form")
         // Set id of form to scoresForm
@@ -243,28 +272,92 @@ function highScores(){
         var inputField = document.createElement("input")
         // Set type of input to text
         inputField.setAttribute("type", "text")
+        // Set id of input to userScoreSubmission
+        inputField.setAttribute("id", "userScoreSubmission")
         // Append input to form
         document.getElementById("scoresForm").appendChild(inputField)
+        // Create submit button
+        var submitBtn = document.createElement("button")
+        // Set id of button to submitScore
+        submitBtn.setAttribute("id", "submitScore")
+        // Add text to submit button
+        submitBtn.textContent = "Submit score"
+        // Add event listener to button
+        submitBtn.addEventListener("click", submission)
+          // Append button to form
+        document.getElementById("scoresForm").appendChild(submitBtn)
 
-    // Create button to play again
-    var replayBtn = document.createElement("button")
-    replayBtn.setAttribute("id", "replay")
-    replayBtn.textContent = "Play again?"
-    replayBtn.addEventListener("click", ticker)
-    scoringEl.appendChild(replayBtn)
 }
 
-// Taking input from form
-var 
+function submission(event){
+    event.preventDefault();
+
+    var userInitialsInput = document.getElementById("userScoreSubmission")
+    var initialsText = userInitialsInput.value.trim();
+    
+    // Check if initials are empty
+    if (initialsText == "") {
+        return;
+    }
+    // Add initials text to storedNames array, clear input
+    storedNames.push(initialsText);
+    userInitialsInput.value = "";
+    // Add score to storedScores array
+    var finalScoreEl = document.getElementById("finalScore")
+    var finalScore = parseInt(finalScoreEl.textContent)
+    storedScores.push(finalScore);
+
+    saveScores();
+    inLS();
+    renderScores();
+
+//   When the user initials are submitted
+    // var userInitialsInput = document.getElementById("userScoreSubmission")
+
+    //     // Store updated scores in local storage and refresh list
+    //     saveScores();
+    //     refreshScores();
+    // })
+}
+
+function inLS() {
+    var savedNames = JSON.parse(localStorage.getItem("Name"));
+    var savedScores = JSON.parse(localStorage.getItem("Score"));
+
+    if (storedNames !== null) {
+        storedNames = savedNames;
+    }
+
+    if (storedScores !== null) {
+        storedScores = savedScores;
+    }
+
+    renderScores();
+}
+
+function renderScores() {
+    console.log("rendered Scores is called")
+    // userInitialsInput.innerHTML = "";
+}
+
+
+function saveScores(){
+    // Stringify and set the name in local storage
+    localStorage.setItem("Name", JSON.stringify(storedNames))
+    // Stringify and set the score in local storage
+    localStorage.setItem("Score", JSON.stringify(storedScores))
+}
+
+
 
 
 // Starts timer for quiz
-j = 1000;
 function quizTimer() {
+    startBtnEl.setAttribute("display", "none")
     var y = setInterval (function() {
-        if (j >= 0) {
-            countdown.textContent = j;
-            j--;
+        if (timeRemaining >= 0) {
+            countdown.textContent = timeRemaining;
+            timeRemaining--;
         } else {
             clearInterval(y);
             alert("time's up")
@@ -272,14 +365,3 @@ function quizTimer() {
         }, 1000
     )
 }
-
-
-// function choices(){
-//     while (questionTrack === 0){
-//     }
-// }
-
-// var answerChoiceEl = document.querySelectorAll(".answer");
-//     answerChoiceEl.addEventListener("click", function(event) {
-//         console.log("clicked");
-//     })
