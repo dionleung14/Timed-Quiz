@@ -23,73 +23,73 @@ var questionsArr = [
         ]
     },
     {
-        question: `q2`, 
+        question: `In generations 4 and later, what move is best suited to dispatch an enemy Aggron if ignoring STAB?`, 
         answers: [
             {
-                option: `answer1`,
+                option: `Earthquake`,
                 result: true
             },
             {
-                option: `answer2`,
+                option: `Surf`,
                 result: false
             },
             {
-                option: `answer3`,
+                option: `Close Combat`,
                 result: false
             }
         ]
     },
-    // {
-    //     question: `q3`, 
-    //     answers: [
-    //         {
-    //             option: `answer1`,
-    //             result: true
-    //         },
-    //         {
-    //             option: `answer2`,
-    //             result: false
-    //         },
-    //         {
-    //             option: `answer3`,
-    //             result: false
-    //         }
-    //     ]
-    // },
-    // {
-    //     question: `q4`, 
-    //     answers: [
-    //         {
-    //             option: `answer1`,
-    //             result: true
-    //         },
-    //         {
-    //             option: `answer2`,
-    //             result: false
-    //         },
-    //         {
-    //             option: `answer3`,
-    //             result: false
-    //         }
-    //     ]
-    // },
-    // {
-    //     question: `q5`, 
-    //     answers: [
-    //         {
-    //             option: `answer1`,
-    //             result: true
-    //         },
-    //         {
-    //             option: `answer2`,
-    //             result: false
-    //         },
-    //         {
-    //             option: `answer3`,
-    //             result: false
-    //         }
-    //     ]
-    // }
+    {
+        question: `How does Gloom evolve into Bellossom?`, 
+        answers: [
+            {
+                option: `Level up with high friendship during the day`,
+                result: false
+            },
+            {
+                option: `Trade while holding a Sun Stone`,
+                result: false
+            },
+            {
+                option: `Using a Sun Stone`,
+                result: true
+            }
+        ]
+    },
+    {
+        question: `Which of the following Pokemon do NOT have an Alolan form?`, 
+        answers: [
+            {
+                option: `Sandshrew`,
+                result: false
+            },
+            {
+                option: `Gastly`,
+                result: true
+            },
+            {
+                option: `Diglett`,
+                result: false
+            }
+        ]
+    },
+    {
+        question: `In generation 3, which badge gives the player character the ability to control Pokemon level 50 and below?`, 
+        answers: [
+            {
+                option: `Heat Badge`,
+                result: true
+            },
+            {
+                option: `Feather Badge`,
+                result: false
+            },
+            {
+                option: `Knuckle Badge`,
+                result: false
+            }
+        ]
+    }
 ]
 
 // Grab start button
