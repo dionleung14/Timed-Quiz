@@ -125,19 +125,27 @@ var timeRemaining = 1000;
 // Add click listener to start button to start ticker function
 startBtnEl.addEventListener("click",ticker);
 
+// This function resets everything for a new game
+function reset(){
+    rightAnswers = 0;
+    wrongAnswers = 0;
+    timeRemaining = 1000;
+    questionTrack = 0;
+}
 
-// This function is a countdown ticker to countdown prior to quiz
+// This function is a countdown ticker prior to quiz starting
 function ticker() {
-    console.log("clicked ticker")
+    // 3 seconds before quiz starts (variable i)
     var i = 1;
-    var x = setInterval(function() { 
+    var preQuizCountdown = setInterval(function() { 
         if (i >= 1) {
             countdown.textContent = i;
             i--;
         } else {
-            // gameOver();
-            clearInterval(x);
-            quizTimer();
+            // gameOverCheck();
+            clearInterval(preQuizCountdown);
+            startBtnEl.style.display = "none";
+            quizStart();
             displayQuestion();
         }
     }, 1000)
@@ -156,11 +164,15 @@ function displayQuestion(){
     // Creates an h3 element for the question text (question itself)
     var questionText = document.createElement("h3")
     // Fills in question h3 with stored question
-    questionText.textContent = currentQuestion.question
-    // Assigns the question h3 a class of .question
-    questionText.setAttribute("class", "question")
-    // Appends the question to the question div
-    questionDiv.appendChild(questionText)
+    // if (!currentQuestion) {
+        questionText.textContent = currentQuestion.question
+        // Assigns the question h3 a class of .question
+        questionText.setAttribute("class", "question")
+        // Appends the question to the question div
+        questionDiv.appendChild(questionText)
+    // } else {
+    //     gameOverCheck();
+    // }
 
     // Loops over the length of answer choices and 
     // fills in choice options with stored answer text
@@ -186,27 +198,29 @@ function displayQuestion(){
 
 // This function checks whether the user got the question correct or not
 function answerChecker(event){
+    // Assigns variable check to the answer clicked
     var check = event.target.getAttribute("result");
+    // Grabs a reference to the empty h5 with id of #result
     var resultEl = document.querySelector("#result")
     if (check==="true") {
         rightAnswers++;
         resultEl.textContent = "Correct!"
-        gameOver();
+        gameOverCheck();
     } else {
         wrongAnswers++;
         resultEl.textContent = "Sorry, that was incorrect."
-        gameOver();
+        gameOverCheck();
     }
-    // After clicking, increment questionTrack
+    // After clicking an answer, increment questionTrack
     questionTrack++;
     // Call displayQuestion to populate the next question
     displayQuestion();
 }
 
 // This function will check for end game conditions
-// (timer timeRemaining = 0 and if there are no more questions)
+// (timer timeRemaining = 0 or if there are no more questions)
 // Also brings up score element
-function gameOver(){
+function gameOverCheck(){
     if (timeRemaining==0 || questionTrack==(questionsArr.length-1)) {
         highScores();
     }
@@ -218,7 +232,6 @@ function highScores(){
     // Clears divs of any text content
     questionsEl.removeChild(questionsEl.lastChild)
     headerEl.removeChild(headerEl.lastChild)
-    descriptionEl.textContent = "";
     timerEl.removeChild(timerEl.lastChild)
     timerEl.removeChild(timerEl.lastChild)
     
@@ -230,13 +243,19 @@ function highScores(){
         
         // Create score field and calculation
         var userScore = document.createElement("h5");
+        // Creates attribute of id for #finalScore
         userScore.setAttribute("id", "finalScore")
         var scoreMultiplier = 1;
+        // if user got all questions right
         if (rightAnswers === questionsArr.length) {
             scoreMultiplier = 15;
-        } else if (wrongAnswers === questionsArr.length) {
+        }
+        // if user got all questions wrong
+        else if (wrongAnswers === questionsArr.length) {
             scoreMultiplier = 0.05;
-        } else {
+        }
+        // If user ended up with non-zero right and wrong answers 
+        else {
             scoreMultiplier = rightAnswers/wrongAnswers
         }
         // Store final score in a variable
@@ -258,10 +277,14 @@ function highScores(){
 }
 
 function restart(){
-    // console.log("restart button clicked")
-    questionTrack = 0;
-    timeRemaining = 1000;
-    ticker()
+    reset();
+    var headerText = document.querySelector("#heading")
+    var resultEl = document.querySelector("#result")
+    var scoreFormEl = document.querySelector("#scoring")
+    ticker();
+    headerText.textContent = "Quiz Time: Replay"
+    resultEl.textContent = "";
+    scoreFormEl.style.visibility = "hidden";
 }
 
 // This function writes the form to submit user score and initials to local storage
@@ -291,9 +314,9 @@ function scoreForm() {
         submitBtn.addEventListener("click", submission)
           // Append button to form
         document.getElementById("scoresForm").appendChild(submitBtn)
-
 }
 
+// This function runs on click of submitting a name and score
 function submission(event){
     event.preventDefault();
 
@@ -320,16 +343,10 @@ function submission(event){
     saveScores(scoreEntry);
     inLS();
     renderScores();
-
-//   When the user initials are submitted
-    // var userInitialsInput = document.getElementById("userScoreSubmission")
-
-    //     // Store updated scores in local storage and refresh list
-    //     saveScores();
-    //     refreshScores();
-    // })
 }
 
+// This function checks local storage for any saved names and scores
+// then displays (renders) them
 function inLS() {
     var savedNames = JSON.parse(localStorage.getItem("Name"));
     var savedScores = JSON.parse(localStorage.getItem("Score"));
@@ -345,12 +362,13 @@ function inLS() {
     renderScores();
 }
 
+// This function displays scores saved in local storage
 function renderScores() {
     console.log("rendered Scores is called")
     // userInitialsInput.innerHTML = "";
 }
 
-
+// This function saves scores to local storage
 function saveScores(scoreObject){
     var pullScores = JSON.parse(localStorage.getItem("highScores"))
     if (pullScores && pullScores.length) {
@@ -362,13 +380,10 @@ function saveScores(scoreObject){
     }
 }
 
-
-
-
 // Starts timer for quiz
-function quizTimer() {
-    // reset all variables to default
-    // move the statement removing text from #description here
+function quizStart() {
+    reset();
+    descriptionEl.textContent = "";
     startBtnEl.setAttribute("display", "none")
     var y = setInterval (function() {
         if (timeRemaining >= 0) {
