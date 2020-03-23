@@ -136,7 +136,7 @@ function reset(){
 // This function is a countdown ticker prior to quiz starting
 function ticker() {
     // 3 seconds before quiz starts (variable i)
-    var i = 1;
+    var i = 3;
     var preQuizCountdown = setInterval(function() { 
         if (i >= 1) {
             countdown.textContent = i;
@@ -232,7 +232,6 @@ function highScores(){
     // Clears divs of any text content
     questionsEl.removeChild(questionsEl.lastChild)
     headerEl.removeChild(headerEl.lastChild)
-    timerEl.removeChild(timerEl.lastChild)
     timerEl.removeChild(timerEl.lastChild)
     
     // timerEl.removeChild(timerEl.children)
