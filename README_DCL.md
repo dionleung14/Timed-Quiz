@@ -4,7 +4,7 @@
 
 ### Summary of this documentation
 
-This .md document (README_DCL.md) will describe features on the webpage https://dionleung14.github.id/Password-Generator/ in all supporting files. 
+This .md document (README_DCL.md) will describe features on the webpage https://dionleung14.github.id/Timed-Quiz/ in all supporting files. 
 * Features of index.html 
 * Features of style.css 
 * Features of script.js 
